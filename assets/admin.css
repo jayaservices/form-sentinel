@@ -1,0 +1,81 @@
+.form-sentinel-wrap {
+	max-width: 1180px;
+}
+
+.form-sentinel-cards {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(150px, 1fr));
+	gap: 16px;
+	margin: 24px 0;
+}
+
+.form-sentinel-card,
+.form-sentinel-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.form-sentinel-card {
+	border-left: 4px solid #646970;
+	padding: 18px;
+}
+
+.form-sentinel-card span,
+.form-sentinel-card strong {
+	display: block;
+}
+
+.form-sentinel-card strong {
+	font-size: 28px;
+	margin-top: 6px;
+}
+
+.form-sentinel-card.card-success { border-left-color: #00a32a; }
+.form-sentinel-card.card-danger { border-left-color: #d63638; }
+.form-sentinel-card.card-warning { border-left-color: #dba617; }
+
+.form-sentinel-panel {
+	margin: 18px 0;
+	padding: 20px;
+}
+
+.form-sentinel-filters {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 16px;
+}
+
+.form-sentinel-status {
+	border-radius: 999px;
+	display: inline-block;
+	font-weight: 600;
+	padding: 4px 9px;
+	text-transform: capitalize;
+}
+
+.status-accepted { background: #edfaef; color: #006b1b; }
+.status-failed { background: #fcf0f1; color: #8a2424; }
+.status-skipped { background: #fcf9e8; color: #6e5a00; }
+.status-received { background: #f0f0f1; color: #3c434a; }
+
+.form-sentinel-detail {
+	display: grid;
+	grid-template-columns: 140px 1fr;
+	gap: 10px 20px;
+}
+
+.form-sentinel-detail dt {
+	font-weight: 600;
+}
+
+.form-sentinel-detail dd {
+	margin: 0;
+}
+
+@media (max-width: 782px) {
+	.form-sentinel-cards { grid-template-columns: 1fr 1fr; }
+	.form-sentinel-filters { align-items: stretch; flex-direction: column; }
+}
