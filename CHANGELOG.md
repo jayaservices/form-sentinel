@@ -2,6 +2,20 @@
 
 All notable changes to Form Sentinel will be documented here.
 
+## [0.2.0-beta] - 2026-08-13
+
+### Added
+
+- CF7 diagnostics for empty or external `From` domains, undefined mail tags, unused form fields, and demo mode.
+- Per-submission technical status timeline.
+- Filtered CSV export and selected-record deletion for administrators.
+- Configurable field exclusions in addition to automatic sensitive-field masking.
+- Integration with WordPress personal-data export and erasure requests.
+
+### Changed
+
+- Database schema upgrade adds a timeline field while retaining existing events.
+
 ## [0.1.0-alpha] - 2026-08-03
 
 ### Added

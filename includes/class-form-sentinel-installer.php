@@ -3,7 +3,7 @@
 defined( 'ABSPATH' ) || exit;
 
 final class Form_Sentinel_Installer {
-	public const DB_VERSION = '1';
+	public const DB_VERSION = '2';
 	public const CLEANUP_HOOK = 'form_sentinel_daily_cleanup';
 
 	public static function activate(): void {
@@ -25,6 +25,15 @@ final class Form_Sentinel_Installer {
 		}
 	}
 
+	public static function maybe_upgrade(): void {
+		if ( self::DB_VERSION === (string) get_option( 'form_sentinel_db_version', '' ) ) {
+			return;
+		}
+
+		self::create_table();
+		update_option( 'form_sentinel_db_version', self::DB_VERSION );
+	}
+
 	private static function create_table(): void {
 		global $wpdb;
 
@@ -43,6 +52,7 @@ final class Form_Sentinel_Installer {
 			mail_recipient text NULL,
 			error_code varchar(100) NULL,
 			error_message text NULL,
+			timeline longtext NULL,
 			submitted_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),

@@ -29,7 +29,7 @@ Not included: automated tests inside a WordPress environment, retry, scheduled t
 
 ## 0.2.0-beta — trust and diagnosis
 
-Planned candidates:
+Delivered:
 
 - diagnose invalid or external `From` domains;
 - detect missing/unused CF7 mail tags;

@@ -7,6 +7,7 @@ global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}form_sentinel_events" );
 delete_option( 'form_sentinel_db_version' );
 delete_option( 'form_sentinel_retention_days' );
+delete_option( 'form_sentinel_excluded_fields' );
 
 $timestamp = wp_next_scheduled( 'form_sentinel_daily_cleanup' );
 if ( $timestamp ) {

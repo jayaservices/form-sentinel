@@ -1,179 +1,34 @@
 <?php
-
 defined( 'ABSPATH' ) || exit;
 
 final class Form_Sentinel_Admin {
 	private Form_Sentinel_Repository $repository;
-
-	public function __construct( Form_Sentinel_Repository $repository ) {
-		$this->repository = $repository;
-	}
-
-	public function register_hooks(): void {
-		add_action( 'admin_menu', array( $this, 'register_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'admin_post_form_sentinel_save_settings', array( $this, 'save_settings' ) );
-	}
-
-	public function register_menu(): void {
-		add_menu_page(
-			__( 'Form Sentinel', 'form-sentinel' ),
-			__( 'Form Sentinel', 'form-sentinel' ),
-			'manage_options',
-			'form-sentinel',
-			array( $this, 'render_page' ),
-			'dashicons-shield-alt',
-			58
-		);
-	}
-
-	public function enqueue_assets( string $hook ): void {
-		if ( 'toplevel_page_form-sentinel' !== $hook ) {
-			return;
-		}
-
-		wp_enqueue_style( 'form-sentinel-admin', FORM_SENTINEL_URL . 'assets/admin.css', array(), FORM_SENTINEL_VERSION );
-	}
+	private Form_Sentinel_Diagnostics $diagnostics;
+	public function __construct( Form_Sentinel_Repository $repository ) { $this->repository = $repository; $this->diagnostics = new Form_Sentinel_Diagnostics(); }
+	public function register_hooks(): void { add_action( 'admin_menu', array( $this, 'register_menu' ) ); add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) ); add_action( 'admin_post_form_sentinel_save_settings', array( $this, 'save_settings' ) ); add_action( 'admin_post_form_sentinel_export_csv', array( $this, 'export_csv' ) ); add_action( 'admin_post_form_sentinel_delete_events', array( $this, 'delete_events' ) ); }
+	public function register_menu(): void { add_menu_page( __( 'Form Sentinel', 'form-sentinel' ), __( 'Form Sentinel', 'form-sentinel' ), 'manage_options', 'form-sentinel', array( $this, 'render_page' ), 'dashicons-shield-alt', 58 ); }
+	public function enqueue_assets( string $hook ): void { if ( 'toplevel_page_form-sentinel' === $hook ) { wp_enqueue_style( 'form-sentinel-admin', FORM_SENTINEL_URL . 'assets/admin.css', array(), FORM_SENTINEL_VERSION ); } }
 
 	public function render_page(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to access this page.', 'form-sentinel' ) );
-		}
-
-		if ( isset( $_GET['event'] ) ) {
-			$this->render_detail( absint( $_GET['event'] ) );
-			return;
-		}
-
-		$status   = isset( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : '';
-		$form_id  = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
-		$page     = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
-		$result   = $this->repository->query( array( 'status' => $status, 'form_id' => $form_id ), $page );
-		$counts   = $this->repository->count_by_status();
-		$base_url = admin_url( 'admin.php?page=form-sentinel' );
-		?>
-		<div class="wrap form-sentinel-wrap">
-			<h1><?php esc_html_e( 'Form Sentinel', 'form-sentinel' ); ?></h1>
-			<p class="description"><?php esc_html_e( 'A technical success means WordPress accepted the email for sending. It does not prove inbox delivery.', 'form-sentinel' ); ?></p>
-
-			<div class="form-sentinel-cards">
-				<?php $this->render_card( __( 'Received', 'form-sentinel' ), array_sum( $counts ), 'neutral' ); ?>
-				<?php $this->render_card( __( 'Accepted', 'form-sentinel' ), $counts['accepted'] ?? 0, 'success' ); ?>
-				<?php $this->render_card( __( 'Failed', 'form-sentinel' ), $counts['failed'] ?? 0, 'danger' ); ?>
-				<?php $this->render_card( __( 'Skipped', 'form-sentinel' ), $counts['skipped'] ?? 0, 'warning' ); ?>
-			</div>
-
-			<div class="form-sentinel-panel">
-				<form method="get" class="form-sentinel-filters">
-					<input type="hidden" name="page" value="form-sentinel">
-					<label for="form-sentinel-status"><?php esc_html_e( 'Email status', 'form-sentinel' ); ?></label>
-					<select id="form-sentinel-status" name="status">
-						<option value=""><?php esc_html_e( 'All statuses', 'form-sentinel' ); ?></option>
-						<?php foreach ( array( 'received', 'accepted', 'failed', 'skipped' ) as $option ) : ?>
-							<option value="<?php echo esc_attr( $option ); ?>" <?php selected( $status, $option ); ?>><?php echo esc_html( ucfirst( $option ) ); ?></option>
-						<?php endforeach; ?>
-					</select>
-					<label for="form-sentinel-form-id"><?php esc_html_e( 'Form ID', 'form-sentinel' ); ?></label>
-					<input id="form-sentinel-form-id" type="number" min="1" name="form_id" value="<?php echo esc_attr( $form_id ?: '' ); ?>">
-					<button class="button"><?php esc_html_e( 'Filter', 'form-sentinel' ); ?></button>
-					<a class="button-link" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Reset', 'form-sentinel' ); ?></a>
-				</form>
-
-				<table class="widefat striped form-sentinel-table">
-					<thead><tr>
-						<th><?php esc_html_e( 'Date', 'form-sentinel' ); ?></th>
-						<th><?php esc_html_e( 'Form', 'form-sentinel' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'form-sentinel' ); ?></th>
-						<th><?php esc_html_e( 'Recipient', 'form-sentinel' ); ?></th>
-						<th><?php esc_html_e( 'Action', 'form-sentinel' ); ?></th>
-					</tr></thead>
-					<tbody>
-					<?php if ( ! $result['items'] ) : ?>
-						<tr><td colspan="5"><?php esc_html_e( 'No submissions recorded yet.', 'form-sentinel' ); ?></td></tr>
-					<?php else : foreach ( $result['items'] as $item ) : ?>
-						<tr>
-							<td><?php echo esc_html( get_date_from_gmt( $item->submitted_at, 'Y-m-d H:i:s' ) ); ?></td>
-							<td><?php echo esc_html( $item->form_title ?: '#' . $item->form_id ); ?></td>
-							<td><span class="form-sentinel-status status-<?php echo esc_attr( $item->mail_status ); ?>"><?php echo esc_html( $item->mail_status ); ?></span></td>
-							<td><?php echo esc_html( $item->mail_recipient ?: '—' ); ?></td>
-							<td><a href="<?php echo esc_url( add_query_arg( 'event', $item->id, $base_url ) ); ?>"><?php esc_html_e( 'View', 'form-sentinel' ); ?></a></td>
-						</tr>
-					<?php endforeach; endif; ?>
-					</tbody>
-				</table>
-				<?php
-				$total_pages = (int) ceil( $result['total'] / 20 );
-				if ( $total_pages > 1 ) {
-					echo wp_kses_post( paginate_links( array( 'base' => add_query_arg( 'paged', '%#%' ), 'format' => '', 'current' => $page, 'total' => $total_pages ) ) );
-				}
-				?>
-			</div>
-
-			<div class="form-sentinel-panel">
-				<h2><?php esc_html_e( 'Data retention', 'form-sentinel' ); ?></h2>
-				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-					<input type="hidden" name="action" value="form_sentinel_save_settings">
-					<?php wp_nonce_field( 'form_sentinel_save_settings' ); ?>
-					<label for="form-sentinel-retention"><?php esc_html_e( 'Delete submissions after', 'form-sentinel' ); ?></label>
-					<input id="form-sentinel-retention" type="number" min="1" max="365" name="retention_days" value="<?php echo esc_attr( get_option( 'form_sentinel_retention_days', 30 ) ); ?>">
-					<?php esc_html_e( 'days', 'form-sentinel' ); ?>
-					<?php submit_button( __( 'Save settings', 'form-sentinel' ), 'secondary', 'submit', false ); ?>
-				</form>
-			</div>
-		</div>
-		<?php
+		$this->assert_access(); if ( isset( $_GET['event'] ) ) { $this->render_detail( absint( $_GET['event'] ) ); return; }
+		$filters = $this->request_filters(); $page = max( 1, absint( $_GET['paged'] ?? 1 ) ); $result = $this->repository->query( $filters, $page ); $counts = $this->repository->count_by_status(); $base = admin_url( 'admin.php?page=form-sentinel' ); ?>
+		<div class="wrap form-sentinel-wrap"><h1><?php esc_html_e( 'Form Sentinel', 'form-sentinel' ); ?></h1><p class="description"><?php esc_html_e( 'Accepted means WordPress accepted the email for sending; it does not prove inbox delivery.', 'form-sentinel' ); ?></p><?php $this->render_notice(); ?>
+		<div class="form-sentinel-cards"><?php $this->render_card( __( 'Received', 'form-sentinel' ), array_sum( $counts ), 'neutral' ); $this->render_card( __( 'Accepted', 'form-sentinel' ), $counts['accepted'] ?? 0, 'success' ); $this->render_card( __( 'Failed', 'form-sentinel' ), $counts['failed'] ?? 0, 'danger' ); $this->render_card( __( 'Skipped', 'form-sentinel' ), $counts['skipped'] ?? 0, 'warning' ); ?></div>
+		<?php $this->render_diagnostics(); ?>
+		<div class="form-sentinel-panel"><h2><?php esc_html_e( 'Submission journal', 'form-sentinel' ); ?></h2><form method="get" class="form-sentinel-filters"><input type="hidden" name="page" value="form-sentinel"><label for="form-sentinel-status"><?php esc_html_e( 'Email status', 'form-sentinel' ); ?></label><select id="form-sentinel-status" name="status"><option value=""><?php esc_html_e( 'All statuses', 'form-sentinel' ); ?></option><?php foreach ( array( 'received', 'accepted', 'failed', 'skipped' ) as $option ) : ?><option value="<?php echo esc_attr( $option ); ?>" <?php selected( $filters['status'], $option ); ?>><?php echo esc_html( ucfirst( $option ) ); ?></option><?php endforeach; ?></select><label for="form-sentinel-form-id"><?php esc_html_e( 'Form ID', 'form-sentinel' ); ?></label><input id="form-sentinel-form-id" type="number" min="1" name="form_id" value="<?php echo esc_attr( $filters['form_id'] ?: '' ); ?>"><button class="button"><?php esc_html_e( 'Filter', 'form-sentinel' ); ?></button><a class="button-link" href="<?php echo esc_url( $base ); ?>"><?php esc_html_e( 'Reset', 'form-sentinel' ); ?></a></form>
+		<p><a class="button" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array_merge( array( 'action' => 'form_sentinel_export_csv' ), $filters ), admin_url( 'admin-post.php' ) ), 'form_sentinel_export_csv' ) ); ?>"><?php esc_html_e( 'Export filtered CSV', 'form-sentinel' ); ?></a></p>
+		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post"><input type="hidden" name="action" value="form_sentinel_delete_events"><input type="hidden" name="return_url" value="<?php echo esc_url( add_query_arg( $filters, $base ) ); ?>"><?php wp_nonce_field( 'form_sentinel_delete_events' ); ?><table class="widefat striped form-sentinel-table"><thead><tr><td class="check-column"><input type="checkbox" id="form-sentinel-select-all"></td><th><?php esc_html_e( 'Date', 'form-sentinel' ); ?></th><th><?php esc_html_e( 'Form', 'form-sentinel' ); ?></th><th><?php esc_html_e( 'Status', 'form-sentinel' ); ?></th><th><?php esc_html_e( 'Recipient', 'form-sentinel' ); ?></th><th><?php esc_html_e( 'Action', 'form-sentinel' ); ?></th></tr></thead><tbody><?php if ( ! $result['items'] ) : ?><tr><td colspan="6"><?php esc_html_e( 'No submissions recorded yet.', 'form-sentinel' ); ?></td></tr><?php else : foreach ( $result['items'] as $item ) : ?><tr><th class="check-column"><input type="checkbox" name="event_ids[]" value="<?php echo esc_attr( $item->id ); ?>"></th><td><?php echo esc_html( get_date_from_gmt( $item->submitted_at, 'Y-m-d H:i:s' ) ); ?></td><td><?php echo esc_html( $item->form_title ?: '#' . $item->form_id ); ?></td><td><span class="form-sentinel-status status-<?php echo esc_attr( $item->mail_status ); ?>"><?php echo esc_html( $item->mail_status ); ?></span></td><td><?php echo esc_html( $item->mail_recipient ?: '—' ); ?></td><td><a href="<?php echo esc_url( add_query_arg( 'event', $item->id, $base ) ); ?>"><?php esc_html_e( 'View', 'form-sentinel' ); ?></a></td></tr><?php endforeach; endif; ?></tbody></table><?php submit_button( __( 'Delete selected submissions', 'form-sentinel' ), 'delete', 'submit', false, array( 'onclick' => "return confirm('" . esc_js( __( 'Delete the selected submissions permanently?', 'form-sentinel' ) ) . "');" ) ); ?></form><?php $pages = (int) ceil( $result['total'] / 20 ); if ( $pages > 1 ) { echo wp_kses_post( paginate_links( array( 'base' => add_query_arg( array_merge( $filters, array( 'paged' => '%#%' ) ), $base ), 'format' => '', 'current' => $page, 'total' => $pages ) ) ); } ?></div>
+		<?php $this->render_settings(); ?></div><script>document.addEventListener('DOMContentLoaded',function(){const a=document.getElementById('form-sentinel-select-all');if(a){a.addEventListener('change',function(){document.querySelectorAll('input[name="event_ids[]"]').forEach(function(b){b.checked=a.checked;});});}});</script><?php
 	}
-
-	public function save_settings(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to perform this action.', 'form-sentinel' ) );
-		}
-
-		check_admin_referer( 'form_sentinel_save_settings' );
-		$days = isset( $_POST['retention_days'] ) ? absint( $_POST['retention_days'] ) : 30;
-		update_option( 'form_sentinel_retention_days', min( 365, max( 1, $days ) ) );
-
-		wp_safe_redirect( add_query_arg( 'settings-updated', '1', admin_url( 'admin.php?page=form-sentinel' ) ) );
-		exit;
-	}
-
-	private function render_detail( int $id ): void {
-		$event = $this->repository->find( $id );
-
-		if ( ! $event ) {
-			wp_die( esc_html__( 'Submission not found.', 'form-sentinel' ) );
-		}
-
-		$payload = json_decode( $event->payload, true );
-		?>
-		<div class="wrap form-sentinel-wrap">
-			<h1><?php echo esc_html( sprintf( __( 'Submission #%d', 'form-sentinel' ), $event->id ) ); ?></h1>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=form-sentinel' ) ); ?>">&larr; <?php esc_html_e( 'Back to journal', 'form-sentinel' ); ?></a></p>
-			<div class="form-sentinel-panel">
-				<dl class="form-sentinel-detail">
-					<dt><?php esc_html_e( 'Form', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->form_title . ' (#' . $event->form_id . ')' ); ?></dd>
-					<dt><?php esc_html_e( 'Status', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->mail_status ); ?></dd>
-					<dt><?php esc_html_e( 'Page', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->page_url ?: '—' ); ?></dd>
-					<dt><?php esc_html_e( 'Recipient', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->mail_recipient ?: '—' ); ?></dd>
-					<dt><?php esc_html_e( 'Error', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( trim( $event->error_code . ' ' . $event->error_message ) ?: '—' ); ?></dd>
-				</dl>
-				<h2><?php esc_html_e( 'Saved fields', 'form-sentinel' ); ?></h2>
-				<table class="widefat striped"><tbody>
-				<?php foreach ( is_array( $payload ) ? $payload : array() as $key => $value ) : ?>
-					<tr><th><?php echo esc_html( $key ); ?></th><td><?php echo esc_html( is_array( $value ) ? implode( ', ', $value ) : $value ); ?></td></tr>
-				<?php endforeach; ?>
-				</tbody></table>
-			</div>
-		</div>
-		<?php
-	}
-
-	private function render_card( string $label, int $count, string $type ): void {
-		printf(
-			'<div class="form-sentinel-card card-%1$s"><span>%2$s</span><strong>%3$d</strong></div>',
-			esc_attr( $type ),
-			esc_html( $label ),
-			$count
-		);
-	}
+	public function save_settings(): void { $this->assert_access(); check_admin_referer( 'form_sentinel_save_settings' ); update_option( 'form_sentinel_retention_days', min( 365, max( 1, absint( $_POST['retention_days'] ?? 30 ) ) ) ); update_option( 'form_sentinel_excluded_fields', sanitize_text_field( wp_unslash( $_POST['excluded_fields'] ?? '' ) ) ); $this->redirect( admin_url( 'admin.php?page=form-sentinel' ), 'settings' ); }
+	public function delete_events(): void { $this->assert_access(); check_admin_referer( 'form_sentinel_delete_events' ); $deleted = $this->repository->delete( (array) wp_unslash( $_POST['event_ids'] ?? array() ) ); $url = wp_validate_redirect( wp_unslash( $_POST['return_url'] ?? '' ), admin_url( 'admin.php?page=form-sentinel' ) ); $this->redirect( $url, 'deleted', $deleted ); }
+	public function export_csv(): void { $this->assert_access(); check_admin_referer( 'form_sentinel_export_csv' ); nocache_headers(); header( 'Content-Type: text/csv; charset=utf-8' ); header( 'Content-Disposition: attachment; filename=form-sentinel-submissions.csv' ); $out = fopen( 'php://output', 'w' ); fputcsv( $out, array( 'ID', 'Submitted UTC', 'Form ID', 'Form', 'Status', 'Recipient', 'Page URL', 'Error code', 'Error message', 'Saved fields' ) ); foreach ( $this->repository->all( $this->request_filters() ) as $e ) { fputcsv( $out, array( $e->id, $e->submitted_at, $e->form_id, $e->form_title, $e->mail_status, $e->mail_recipient, $e->page_url, $e->error_code, $e->error_message, $e->payload ) ); } fclose( $out ); exit; }
+	private function render_diagnostics(): void { $forms = $this->diagnostics->scan(); ?><div class="form-sentinel-panel"><h2><?php esc_html_e( 'CF7 configuration checks', 'form-sentinel' ); ?></h2><p class="description"><?php esc_html_e( 'These checks inspect current CF7 settings. They do not test mailbox delivery.', 'form-sentinel' ); ?></p><?php if ( ! $forms ) : ?><p><?php esc_html_e( 'No Contact Form 7 forms were found.', 'form-sentinel' ); ?></p><?php else : foreach ( $forms as $form ) : ?><h3><?php echo esc_html( $form['title'] . ' (#' . $form['id'] . ')' ); ?></h3><?php if ( ! $form['issues'] ) : ?><p class="form-sentinel-ok"><?php esc_html_e( 'No common configuration issue detected.', 'form-sentinel' ); ?></p><?php else : ?><ul class="form-sentinel-diagnostics"><?php foreach ( $form['issues'] as $issue ) : ?><li class="issue-<?php echo esc_attr( $issue['level'] ); ?>"><?php echo esc_html( $issue['message'] ); ?></li><?php endforeach; ?></ul><?php endif; endforeach; endif; ?></div><?php }
+	private function render_settings(): void { ?><div class="form-sentinel-panel"><h2><?php esc_html_e( 'Privacy and retention', 'form-sentinel' ); ?></h2><p class="description"><?php esc_html_e( 'Form Sentinel participates in WordPress personal-data export and erasure tools. Excluded fields are never saved.', 'form-sentinel' ); ?></p><form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post"><input type="hidden" name="action" value="form_sentinel_save_settings"><?php wp_nonce_field( 'form_sentinel_save_settings' ); ?><p><label for="form-sentinel-retention"><?php esc_html_e( 'Delete submissions after', 'form-sentinel' ); ?></label> <input id="form-sentinel-retention" type="number" min="1" max="365" name="retention_days" value="<?php echo esc_attr( get_option( 'form_sentinel_retention_days', 30 ) ); ?>"> <?php esc_html_e( 'days', 'form-sentinel' ); ?></p><p><label for="form-sentinel-excluded-fields"><?php esc_html_e( 'Never save these field names', 'form-sentinel' ); ?></label><br><input class="regular-text" id="form-sentinel-excluded-fields" name="excluded_fields" value="<?php echo esc_attr( get_option( 'form_sentinel_excluded_fields', '' ) ); ?>"><br><span class="description"><?php esc_html_e( 'Comma-separated CF7 field names, for example: message, cv, phone.', 'form-sentinel' ); ?></span></p><?php submit_button( __( 'Save settings', 'form-sentinel' ), 'secondary', 'submit', false ); ?></form></div><?php }
+	private function render_detail( int $id ): void { $event = $this->repository->find( $id ); if ( ! $event ) { wp_die( esc_html__( 'Submission not found.', 'form-sentinel' ) ); } $payload = json_decode( $event->payload, true ); $timeline = json_decode( (string) $event->timeline, true ); ?><div class="wrap form-sentinel-wrap"><h1><?php echo esc_html( sprintf( __( 'Submission #%d', 'form-sentinel' ), $event->id ) ); ?></h1><p><a href="<?php echo esc_url( admin_url( 'admin.php?page=form-sentinel' ) ); ?>">&larr; <?php esc_html_e( 'Back to journal', 'form-sentinel' ); ?></a></p><div class="form-sentinel-panel"><dl class="form-sentinel-detail"><dt><?php esc_html_e( 'Form', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->form_title . ' (#' . $event->form_id . ')' ); ?></dd><dt><?php esc_html_e( 'Status', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->mail_status ); ?></dd><dt><?php esc_html_e( 'Page', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->page_url ?: '—' ); ?></dd><dt><?php esc_html_e( 'Recipient', 'form-sentinel' ); ?></dt><dd><?php echo esc_html( $event->mail_recipient ?: '—' ); ?></dd></dl><h2><?php esc_html_e( 'Status timeline', 'form-sentinel' ); ?></h2><ol class="form-sentinel-timeline"><?php foreach ( is_array( $timeline ) ? $timeline : array() as $entry ) : ?><li><strong><?php echo esc_html( ucfirst( (string) ( $entry['status'] ?? '' ) ) ); ?></strong> — <?php echo esc_html( get_date_from_gmt( (string) ( $entry['at'] ?? '' ), 'Y-m-d H:i:s' ) ); ?><?php if ( ! empty( $entry['message'] ) ) : ?><br><?php echo esc_html( $entry['message'] ); ?><?php endif; ?></li><?php endforeach; ?></ol><h2><?php esc_html_e( 'Saved fields', 'form-sentinel' ); ?></h2><table class="widefat striped"><tbody><?php foreach ( is_array( $payload ) ? $payload : array() as $key => $value ) : ?><tr><th><?php echo esc_html( $key ); ?></th><td><?php echo esc_html( is_array( $value ) ? implode( ', ', $value ) : $value ); ?></td></tr><?php endforeach; ?></tbody></table></div></div><?php }
+	private function request_filters(): array { return array( 'status' => sanitize_key( wp_unslash( $_REQUEST['status'] ?? '' ) ), 'form_id' => absint( $_REQUEST['form_id'] ?? 0 ) ); }
+	private function assert_access(): void { if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'You are not allowed to perform this action.', 'form-sentinel' ) ); } }
+	private function redirect( string $url, string $notice, int $count = 0 ): void { wp_safe_redirect( add_query_arg( array( 'form_sentinel_notice' => $notice, 'form_sentinel_count' => $count ), $url ) ); exit; }
+	private function render_notice(): void { if ( isset( $_GET['form_sentinel_notice'] ) ) { $n = sanitize_key( wp_unslash( $_GET['form_sentinel_notice'] ) ); $c = absint( $_GET['form_sentinel_count'] ?? 0 ); echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( 'deleted' === $n ? sprintf( _n( '%d submission deleted.', '%d submissions deleted.', $c, 'form-sentinel' ), $c ) : __( 'Settings saved.', 'form-sentinel' ) ) . '</p></div>'; } }
+	private function render_card( string $label, int $count, string $type ): void { printf( '<div class="form-sentinel-card card-%1$s"><span>%2$s</span><strong>%3$d</strong></div>', esc_attr( $type ), esc_html( $label ), $count ); }
 }

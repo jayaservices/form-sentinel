@@ -1,4 +1,13 @@
-# Form Sentinel 0.1.0-alpha pilot checklist
+# Form Sentinel 0.2.0-beta pilot checklist
+
+## Beta checks
+
+- Confirm the configuration panel reports an external `From` domain and a missing mail tag on a disposable CF7 form.
+- Confirm intentional unused fields are reported as informational only.
+- Export a filtered CSV as an administrator and check that only the selected form/status is present.
+- Exclude a test field in Form Sentinel settings, submit again, and confirm it is absent from the journal.
+- Delete a disposable event from the journal.
+- In WordPress Tools → Export/Erase Personal Data, run a request using an email present in a test submission.
 
 ## Pilot identity
 

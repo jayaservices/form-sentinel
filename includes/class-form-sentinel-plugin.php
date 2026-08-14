@@ -23,7 +23,11 @@ final class Form_Sentinel_Plugin {
 		load_plugin_textdomain( 'form-sentinel', false, dirname( plugin_basename( FORM_SENTINEL_FILE ) ) . '/languages' );
 
 		global $wpdb;
+		Form_Sentinel_Installer::maybe_upgrade();
 		$this->repository = new Form_Sentinel_Repository( $wpdb );
+
+		$privacy = new Form_Sentinel_Privacy( $this->repository );
+		$privacy->register_hooks();
 
 		if ( class_exists( 'WPCF7_ContactForm' ) ) {
 			$tracker = new Form_Sentinel_Tracker( $this->repository );

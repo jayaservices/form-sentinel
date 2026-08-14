@@ -8,7 +8,7 @@ Form Sentinel prevents silent lead loss on WordPress sites. The first release ta
 
 > An accepted email is not proof of inbox delivery. It means WordPress handed the message to its configured mail transport without an immediate error.
 
-## Current release: 0.1.0-alpha
+## Current release: 0.2.0-beta
 
 This private alpha is suitable for controlled testing on staging sites and selected low-risk production sites. It provides:
 
@@ -21,7 +21,9 @@ This private alpha is suitable for controlled testing on staging sites and selec
 - common sensitive-field masking;
 - automatic deletion after 30 days by default.
 
-It does not yet provide SMTP delivery confirmation, retry, remote monitoring, privacy export/erase integration, or support for other form plugins.
+The beta adds CF7 configuration checks, a per-submission status timeline, CSV export, selective deletion, field exclusions, and WordPress privacy export/erasure integration.
+
+It does not yet provide SMTP delivery confirmation, retry, remote monitoring, or support for other form plugins.
 
 Uninstalling the plugin permanently removes its event table and settings. Export anything you need before uninstalling.
 
@@ -47,6 +49,9 @@ Uninstalling the plugin permanently removes its event table and settings. Export
 - Confirm sensitive fields are masked.
 - Confirm only administrators can access the journal.
 - Confirm the displayed recipient and page URL are correct.
+- Review the CF7 configuration checks. Confirm that intentional unused fields are only informational.
+- Export a filtered CSV and delete a disposable test record.
+- Test the WordPress personal-data export and erasure tools with the email used in a test submission.
 - Deactivate and reactivate the plugin and confirm existing events remain available.
 - Uninstall only on a disposable test instance and confirm the table is removed.
 

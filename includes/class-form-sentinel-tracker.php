@@ -111,6 +111,7 @@ final class Form_Sentinel_Tracker {
 
 	private function sanitize_payload( array $payload ): array {
 		$masked = array();
+		$excluded = array_filter( array_map( 'sanitize_key', explode( ',', (string) get_option( 'form_sentinel_excluded_fields', '' ) ) ) );
 		$deny   = (array) apply_filters(
 			'form_sentinel_sensitive_field_patterns',
 			array( 'password', 'passwd', 'pass', 'secret', 'token', 'card', 'credit', 'cvv', 'cvc' )
@@ -125,6 +126,10 @@ final class Form_Sentinel_Tracker {
 					$is_private = true;
 					break;
 				}
+			}
+
+			if ( in_array( sanitize_key( (string) $key ), $excluded, true ) ) {
+				continue;
 			}
 
 			if ( $is_private ) {
