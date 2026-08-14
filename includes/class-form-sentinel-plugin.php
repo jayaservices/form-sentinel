@@ -17,6 +17,16 @@ final class Form_Sentinel_Plugin {
 	public function boot(): void {
 		add_action( 'plugins_loaded', array( $this, 'load' ) );
 		add_action( Form_Sentinel_Installer::CLEANUP_HOOK, array( $this, 'cleanup' ) );
+		add_action( 'wpmu_new_blog', array( $this, 'install_new_site' ), 10, 1 );
+	}
+
+	public function install_new_site( $site ): void {
+		if ( ! is_multisite() ) { return; }
+		$site_id = is_object( $site ) ? (int) $site->blog_id : (int) $site;
+		if ( $site_id < 1 || ! is_plugin_active_for_network( plugin_basename( FORM_SENTINEL_FILE ) ) ) { return; }
+		switch_to_blog( $site_id );
+		Form_Sentinel_Installer::install_current_site();
+		restore_current_blog();
 	}
 
 	public function load(): void {

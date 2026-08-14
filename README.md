@@ -8,7 +8,7 @@ Form Sentinel prevents silent lead loss on WordPress sites. The first release ta
 
 > An accepted email is not proof of inbox delivery. It means WordPress handed the message to its configured mail transport without an immediate error.
 
-## Current release: 0.2.0-beta
+## Current release: 0.3.0-rc
 
 This private alpha is suitable for controlled testing on staging sites and selected low-risk production sites. It provides:
 
@@ -22,6 +22,8 @@ This private alpha is suitable for controlled testing on staging sites and selec
 - automatic deletion after 30 days by default.
 
 The beta adds CF7 configuration checks, a per-submission status timeline, CSV export, selective deletion, field exclusions, and WordPress privacy export/erasure integration.
+
+The release candidate adds an administrator-only technical email test that does not submit a CF7 form or store a customer lead. In multisite, data and settings are isolated per subsite.
 
 It does not yet provide SMTP delivery confirmation, retry, remote monitoring, or support for other form plugins.
 

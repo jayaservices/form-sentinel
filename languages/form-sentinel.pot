@@ -1,0 +1,325 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-14 11:30+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:9
+#: form-sentinel/includes/class-form-sentinel-admin.php:15
+msgid "Form Sentinel"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:15
+msgid ""
+"Accepted means WordPress accepted the email for sending; it does not prove "
+"inbox delivery."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:16
+msgid "Received"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:16
+msgid "Accepted"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:16
+msgid "Failed"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:16
+msgid "Skipped"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+msgid "Submission journal"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+#: form-sentinel/includes/class-form-sentinel-privacy.php:46
+msgid "Email status"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+msgid "All statuses"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+msgid "Form ID"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+msgid "Filter"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:19
+msgid "Reset"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:20
+msgid "Export filtered CSV"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "Date"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+#: form-sentinel/includes/class-form-sentinel-privacy.php:44
+msgid "Form"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Status"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Recipient"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "Action"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "No submissions recorded yet."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "View"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "Delete selected submissions"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:21
+msgid "Delete the selected submissions permanently?"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:28
+msgid "CF7 configuration checks"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:28
+msgid ""
+"These checks inspect current CF7 settings. They do not test mailbox delivery."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:28
+msgid "No Contact Form 7 forms were found."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:28
+msgid "No common configuration issue detected."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:29
+msgid "Technical email test"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:29
+msgid ""
+"Send a test to your administrator email without submitting a CF7 form or "
+"storing a customer lead."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:29
+#, php-format
+msgid "Recipient: %s. “Accepted” does not prove mailbox delivery."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:29
+msgid "no valid email address"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:29
+msgid "Send technical email test"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "Privacy and retention"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid ""
+"Form Sentinel participates in WordPress personal-data export and erasure "
+"tools. Excluded fields are never saved."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "Delete submissions after"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "days"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "Never save these field names"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "Comma-separated CF7 field names, for example: message, cv, phone."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:30
+msgid "Save settings"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Submission not found."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+#, php-format
+msgid "Submission #%d"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Back to journal"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Page"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+msgid "Status timeline"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:31
+#: form-sentinel/includes/class-form-sentinel-privacy.php:47
+msgid "Saved fields"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:33
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:35
+#, php-format
+msgid "%d submission deleted."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:35
+#, php-format
+msgid ""
+"Test email accepted for sending to %s. Check that inbox; acceptance is not "
+"proof of delivery."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:35
+msgid ""
+"WordPress rejected the test email. Check the mail plugin and PHP error log."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-admin.php:35
+msgid "Settings saved."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:34
+msgid "The CF7 From field is empty."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:36
+msgid "The CF7 From field does not contain a valid email address or mail tag."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:38
+#, php-format
+msgid ""
+"The CF7 From address uses the external domain %s. Use an address from this "
+"site domain to reduce spoofing and deliverability issues."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:42
+#, php-format
+msgid ""
+"Mail tag [%s] is used in the mail template but is not defined in this form."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:46
+#, php-format
+msgid ""
+"Form field [%s] is not used in the mail template. This is informational; it "
+"may be intentional."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-diagnostics.php:50
+msgid ""
+"CF7 demo mode is enabled: Form Sentinel will record submissions as skipped "
+"and CF7 will not send email."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-mail-test.php:11
+msgid "The current administrator account has no valid email address."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-mail-test.php:14
+#, php-format
+msgid "[%s] Form Sentinel email test"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-mail-test.php:15
+msgid ""
+"This is a technical mail test sent by Form Sentinel. No form submission or "
+"customer data was created.\n"
+"\n"
+"Receiving this email confirms that the configured WordPress mail transport "
+"accepted this test; it does not validate a specific Contact Form 7 form."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-mail-test.php:21
+msgid "WordPress accepted the technical test email for sending."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-mail-test.php:21
+msgid ""
+"WordPress rejected the technical test email. Check the mail plugin and PHP "
+"error log."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-plugin.php:71
+msgid "Form Sentinel requires Contact Form 7 to record submissions."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-privacy.php:19
+#: form-sentinel/includes/class-form-sentinel-privacy.php:27
+#: form-sentinel/includes/class-form-sentinel-privacy.php:41
+msgid "Form Sentinel submissions"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-privacy.php:45
+msgid "Submitted"
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-repository.php:20
+msgid "Form Sentinel received the Contact Form 7 submission."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-tracker.php:51
+msgid ""
+"Contact Form 7 skipped the email. Check demo mode, skip_mail, or another "
+"filter."
+msgstr ""
+
+#: form-sentinel/includes/class-form-sentinel-tracker.php:105
+msgid "Contact Form 7 reported an email sending failure."
+msgstr ""

@@ -4,7 +4,7 @@ Tags: contact form 7, email, lead, logging, monitoring
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 0.2.0-beta
+Stable tag: 0.3.0-rc
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,11 @@ An "accepted" status only means WordPress accepted the message for sending. It d
 5. Open Form Sentinel in the WordPress administration menu.
 
 == Changelog ==
+
+= 0.3.0-rc =
+* Add a no-lead technical email test for administrators.
+* Add site-scoped multisite provisioning.
+* Add release-quality, upgrade, and compatibility documentation.
 
 = 0.2.0-beta =
 * Add CF7 From and mail-tag configuration checks.

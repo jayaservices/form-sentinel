@@ -3,18 +3,27 @@
 defined( 'ABSPATH' ) || exit;
 
 final class Form_Sentinel_Installer {
-	public const DB_VERSION = '2';
+	public const DB_VERSION = '3';
 	public const CLEANUP_HOOK = 'form_sentinel_daily_cleanup';
 
-	public static function activate(): void {
-		self::create_table();
+	public static function activate( bool $network_wide = false ): void {
+		if ( is_multisite() && $network_wide ) {
+			foreach ( get_sites( array( 'number' => 0, 'fields' => 'ids' ) ) as $site_id ) {
+				switch_to_blog( (int) $site_id );
+				self::install_current_site();
+				restore_current_blog();
+			}
+			return;
+		}
 
+		self::install_current_site();
+	}
+
+	public static function install_current_site(): void {
+		self::create_table();
 		add_option( 'form_sentinel_db_version', self::DB_VERSION );
 		add_option( 'form_sentinel_retention_days', 30 );
-
-		if ( ! wp_next_scheduled( self::CLEANUP_HOOK ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CLEANUP_HOOK );
-		}
+		if ( ! wp_next_scheduled( self::CLEANUP_HOOK ) ) { wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CLEANUP_HOOK ); }
 	}
 
 	public static function deactivate(): void {

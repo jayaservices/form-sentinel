@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Form Sentinel
  * Description:       Records Contact Form 7 submissions and shows whether WordPress accepted or rejected the related email.
- * Version:           0.2.0-beta
+ * Version:           0.3.0-rc
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Requires Plugins:  contact-form-7
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FORM_SENTINEL_VERSION', '0.2.0-beta' );
+define( 'FORM_SENTINEL_VERSION', '0.3.0-rc' );
 define( 'FORM_SENTINEL_FILE', __FILE__ );
 define( 'FORM_SENTINEL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FORM_SENTINEL_URL', plugin_dir_url( __FILE__ ) );
@@ -25,6 +25,7 @@ require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-repository.php';
 require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-tracker.php';
 require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-diagnostics.php';
 require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-privacy.php';
+require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-mail-test.php';
 require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-admin.php';
 require_once FORM_SENTINEL_PATH . 'includes/class-form-sentinel-plugin.php';
 

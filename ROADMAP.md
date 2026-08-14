@@ -42,13 +42,15 @@ Delivered:
 
 ## 0.3.0-rc — release quality
 
+Delivered for pilot:
+
 - test-send workflow without creating a real customer lead;
-- WordPress multisite behavior decision;
-- upgrade/migration tests;
-- admin accessibility and responsive QA;
-- French translation and complete English source strings;
-- WordPress Plugin Check and PHPCS remediation;
-- pilot across native mail, WP Mail SMTP, Mailjet, Brevo, and maintenance-page contexts.
+- site-scoped WordPress multisite support and documented behavior;
+- upgrade/migration test protocol;
+- keyboard and responsive admin review checklist;
+- French translation source catalog and complete English source catalog;
+- Plugin Check and PHPCS release commands;
+- compatibility matrix for native mail, WP Mail SMTP, Mailjet, Brevo, and maintenance-page contexts.
 
 ## 1.0.0 — WordPress.org
 

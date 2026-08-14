@@ -1,4 +1,12 @@
-# Form Sentinel 0.2.0-beta pilot checklist
+# Form Sentinel 0.3.0-rc pilot checklist
+
+## RC checks
+
+- Follow [UPGRADE-TEST.md](UPGRADE-TEST.md) on one disposable staging site.
+- Run the technical email test as an administrator. Confirm it sends to the current administrator and creates no journal entry.
+- Navigate the administration page using only the keyboard and test it at a narrow mobile width.
+- If multisite is used, verify an event on one subsite is not visible on another.
+- Record each environment in [COMPATIBILITY-MATRIX.md](COMPATIBILITY-MATRIX.md).
 
 ## Beta checks
 

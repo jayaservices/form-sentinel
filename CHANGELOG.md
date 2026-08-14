@@ -2,6 +2,15 @@
 
 All notable changes to Form Sentinel will be documented here.
 
+## [0.3.0-rc] - 2026-08-14
+
+### Added
+
+- Administrator-only technical email test that does not create a CF7 submission or customer lead.
+- Site-scoped multisite provisioning for existing and newly created subsites.
+- Upgrade, compatibility, accessibility, and release-quality checklists.
+- Complete English translation catalog and French translation source catalog, ready for translator review.
+
 ## [0.2.0-beta] - 2026-08-13
 
 ### Added
